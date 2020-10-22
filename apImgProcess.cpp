@@ -189,16 +189,16 @@ char* apDtoC(double* imageData, int size)
 }
 
 /**************************************************************************
-function: transform double data to char data with 100 times strengthened
+function: transform double data to unsigned char data with 100 times strengthened
 input:double* imageData, int size
 output:char*
 *********************************************************************/
-char* apDtoC_strengthened(double* imageData, int size, int k)
+unsigned char* apDtoC_strengthened(double* imageData, int size, int k)
 {
 	int i;
-	char* newData;
+	unsigned char* newData;
 	double temp;
-	newData = (char*)calloc(size, sizeof(char));
+	newData = (unsigned char*)calloc(size, sizeof(unsigned char));
 
 	if (imageData == NULL)
 	{
@@ -211,7 +211,7 @@ char* apDtoC_strengthened(double* imageData, int size, int k)
 		temp = k * imageData[i];
 		if (temp > 255) temp = 255;
 		else if (temp < 0) temp = 0;
-		newData[i] = (char)temp;
+		newData[i] = (unsigned char)temp;
 
 	}
 	return newData;

@@ -13,7 +13,7 @@ void apDataPrint1Dc(char *data,int len,char *path);
 unsigned char* apCtoUC(char* imageData, int size);
 char* apUCtoC(unsigned char* imageData, int size);
 char* apDtoC(double* imageData, int size);
-char* apDtoC_strengthened(double* imageData, int size, int k);
+unsigned char* apDtoC_strengthened(double* imageData, int size, int k);
 
 
 #endif  // header guard
