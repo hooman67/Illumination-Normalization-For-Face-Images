@@ -1,12 +1,12 @@
 GXX=g++
 GCC=gcc
-CXXFLAG=-std=c++11 
+CXXFLAG=-std=c++17
 
 IDIR=./
 INCLUDE=-I$(IDIR)
 
 CVLINK=/usr/local/lib/
-LINK= -L$(CVLINK) -lopencv_highgui -lopencv_imgcodecs -lopencv_core -lopencv_imgproc
+LINK= -L$(CVLINK) -lopencv_highgui -lopencv_imgcodecs -lopencv_core -lopencv_imgproc -lstdc++fs
 
 
 _C_SRC:=apmatrix.c
