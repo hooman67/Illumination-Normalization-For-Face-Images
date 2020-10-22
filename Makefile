@@ -6,7 +6,7 @@ IDIR=./
 INCLUDE=-I$(IDIR)
 
 CVLINK=/usr/local/lib/
-LINK= -L$(CVLINK) -lopencv_highgui -lopencv_imgcodecs -lopencv_core
+LINK= -L$(CVLINK) -lopencv_highgui -lopencv_imgcodecs -lopencv_core -lopencv_imgproc
 
 
 _C_SRC:=apmatrix.c

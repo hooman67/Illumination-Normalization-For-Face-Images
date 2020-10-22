@@ -193,7 +193,7 @@ function: transform double data to char data with 100 times strengthened
 input:double* imageData, int size
 output:char*
 *********************************************************************/
-char* apDtoC_strengthened(double* imageData, int size)
+char* apDtoC_strengthened(double* imageData, int size, int k)
 {
 	int i;
 	char* newData;
@@ -208,7 +208,7 @@ char* apDtoC_strengthened(double* imageData, int size)
 
 	for (i = 0; i < size; i++)
 	{
-		temp = 100 * imageData[i];
+		temp = k * imageData[i];
 		if (temp > 255) temp = 255;
 		else if (temp < 0) temp = 0;
 		newData[i] = (char)temp;

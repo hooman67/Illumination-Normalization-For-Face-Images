@@ -80,8 +80,8 @@ int main()
 	auto hs_larg_1d = ap2DTo1Dd(largescale_2d, img_c->height, img_c->width);
 	auto hs_small_1d = ap2DTo1Dd(smallscale_2d, img_c->height, img_c->width);
 
-	auto hs_larg_c = apDtoC_strengthened(hs_larg_1d, hs_img_larg->imageSize);
-	auto hs_small_c = apDtoC_strengthened(hs_small_1d, hs_img_small->imageSize);
+	auto hs_larg_c = apDtoC_strengthened(hs_larg_1d, hs_img_larg->imageSize, 100);
+	auto hs_small_c = apDtoC_strengthened(hs_small_1d, hs_img_small->imageSize, 100);
 
 	apCopyMatrix1Dc(hs_larg_c, hs_img_larg->imageData, hs_img_larg->imageSize);
 	apCopyMatrix1Dc(hs_small_c, hs_img_small->imageData, hs_img_small->imageSize);
@@ -96,7 +96,7 @@ int main()
 	}
 
 	//transform double data to char data with 100 times strengthened
-	img_recon_c = apDtoC_strengthened(img_d, img_c->imageSize);
+	img_recon_c = apDtoC_strengthened(img_d, img_c->imageSize, 100);
 
 
 	/****************image display and save************/
