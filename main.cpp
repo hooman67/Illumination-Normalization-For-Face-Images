@@ -15,60 +15,156 @@ using namespace cv;
 
 int main()
 {
+
+	/********************************************************************************************************
+	****************************    HS **********************************************************************
+    *********************************************************************************************************/
+	unsigned char* img_uc;
+	double* img_d;
+	double **img_2d;
+	double *smallScale1D;
+	// double *data5;
+	char *smallScale_c;
+	double **largescale;
+	double **smallscale;
+	int i;
+	CvMat * smallAdjust, *img_re;
+    cv::Mat largedct;
+	IplImage* img_c = cvLoadImage("/home/hooman/Illumination-Normalization-For-Face-Images/boy.bmp", 0);
+	if (!img_c)
+	{
+		printf("can't open the image...\n");
+
+	}
+	/*****image decomposition************/
+	//convert char data to unsigned char data
+	img_uc = apCtoUC(img_c->imageData, img_c->imageSize);
+
+	//log transform, also transforms the data to double
+	img_d = apLogUC2(img_uc, img_c->imageSize);
+
+	//matrix transform to 2d
+	img_2d = ap1DTo2Dd(img_d, img_c->height, img_c->width);
+
+	printf("conduct LTV.....\n");//decompose source image to a small-scale image and a large-scale image
+
+	//matrix transform back to 1d
+	largescale = apLTV(img_2d, img_c->height, img_c->width, 0.4, 0.1, 100);
+	smallscale = apGetSmallScale(img_2d, largescale, img_c->height, img_c->width);
+	//  apDataPrint2Dd(smallscale,img_c->height, img_c->width,".\\1.txt");
+
+	/*************image process******************/
+
+	// normalizing illumination
+	largedct = apLargeScale_LogDCT(img_c->height, img_c->width, largescale); // normalize large-scale image
+
+
+	/************image reconstruction*************/
+	img_d = apExp1D((double*)largedct.data, img_c->imageSize);//large
+
+	img_2d = apExp2D(smallscale, img_c->height, img_c->width);//small
+	smallScale1D = ap2DTo1Dd(img_2d, img_c->height, img_c->width);
+	//apDataPrint2Dd(img_2d,img_c->height, img_c->width,".\\1.txt");
+
+	for (i = 0; i < img_c->imageSize; i++)
+	{
+		smallScale1D[i] = img_d[i] * smallScale1D[i];
+	}
+
+	//transform double data to char data with 100 times strengthened
+	smallScale_c = apDtoC_strengthened(smallScale1D, img_c->imageSize);
+
+	/****************image display and save************/
+	apCopyMatrix1Dc(smallScale_c, img_c->imageData, img_c->imageSize);
+    printf("conduct display img_c.....\n");
+	cvNamedWindow("Image", 1);
+	cvShowImage("Image", img_c);
+    cvWaitKey(0);
+    //cv::destroyWindow("Image");
+	cvDestroyAllWindows();
+	// auto hsIm = cvCreateMat(img_c,CV_32SC1);
+	// imwrite("/home/hooman/Illumination-Normalization-For-Face-Images/boyRes.jpg", img_c);
+
+	apReleaseMatrix1Duc(img_uc);
+	apReleaseMatrix1Dd(img_d);
+	apReleaseMatrix2Dd(img_2d, img_c->height);
+	apReleaseMatrix2Dd(largescale, img_c->height);
+	apReleaseMatrix2Dd(smallscale, img_c->height);
+	apReleaseMatrix1Dd(smallScale1D);
+	//apReleaseMatrix1Dd(data5);
+	apReleaseMatrix1Dc(smallScale_c);
+
+	//cv::cvReleaseMat(&largedct);
+    largedct.release();
+	cvReleaseImage(&img_c);
+
+	return 0;
+	/*******************************************************************************************************/
+
+
 	/********************************************************************************************************
 	test: image decomposition (one source image decompose to one small-scale image and one large-scale image)
    *********************************************************************************************************/
-   //unsigned char* data1;
-   //double* data2;
-   //double **data3;
-   //double *data4;
-   //double *data5;
-   //char *data6;
-   //double **largescale;
-   //double **smallscale;
-   //int i;
+   // unsigned char* data1;
+   // double* data2;
+   // double **data3;
+   // double *data4;
+   // double *data5;
+   // char *data6;
+   // double **largescale;
+   // double **smallscale;
+   // int i;
 
-   ////read in
+   // //read in
 
-   //IplImage* img = cvLoadImage(".\\1.bmp",0);
-   //if( !img )  
-   //{  
+   // IplImage* img = cvLoadImage(".\\1.bmp",0);
+   // if( !img )  
+   // {  
    //    printf("can't open the image...\n");  
 
-   //} 
+   // } 
 
-   //data1=apCtoUC(img->imageData, img->imageSize);
+   // //convert char data to unsigned char data
+   // data1=apCtoUC(img->imageData, img->imageSize);
 
-   //data2=apLogUC2(data1,img->imageSize);
-   //data3=ap1DTo2Dd(data2,img->height,img->width);
+   // //log transform, also transforms the data to double
+   // data2=apLogUC2(data1,img->imageSize);
 
-   //printf("conduct LTV.....\n");
+   // //matrix transform to 2d
+   // data3=ap1DTo2Dd(data2,img->height,img->width);
 
-   //largescale=apLTV(data3,img->height, img->width, 0.4, 0.1,100);
-   //smallscale=apGetSmallScale(data3, largescale, img->height, img->width);
+   // printf("conduct LTV.....\n");
 
-   //data4=ap2DTo1Dd(smallscale,img->height, img->width);
-   //data5=apExp1D_strengthened(data4,img->imageSize);
-   //data6=apDtoC(data5,img->imageSize);
+   // largescale=apLTV(data3,img->height, img->width, 0.4, 0.1,100);
+   // smallscale=apGetSmallScale(data3, largescale, img->height, img->width);
 
-   //apCopyMatrix1Dc(data6,img->imageData,img->imageSize);
-   //printf("conduct display img.....\n");
-   //cvNamedWindow( "Image", 1 );
-   //cvShowImage( "Image", img );
-   //cvWaitKey(0); 
-   //cvDestroyWindow("Image");
-   //cvSaveImage(".\\small.jpg",img,0);
+   // //matrix transform back to 1d
+   // data4=ap2DTo1Dd(smallscale,img->height, img->width);
 
-   //apReleaseMatrix1Duc(data1);
-   //apReleaseMatrix1Dd(data2);
-   //apReleaseMatrix2Dd(data3,img->height);
-   //apReleaseMatrix2Dd(largescale,img->height);
-   //apReleaseMatrix2Dd(smallscale,img->height);
-   //apReleaseMatrix1Dd(data4);
-   //apReleaseMatrix1Dd(data5);
-   //apReleaseMatrix1Dc(data6);
+   // //conduct exponential transform, and then increase the output 100 times for display purpose
+   // // data5=apExp1D_strengthened(data4,img->imageSize);
+   
+   // //transform  double data to char data
+   // data6=apDtoC(data5,img->imageSize);
 
-   //cvReleaseImage( &img);
+   // apCopyMatrix1Dc(data6,img->imageData,img->imageSize);
+   // printf("conduct display img.....\n");
+   // cvNamedWindow( "Image", 1 );
+   // cvShowImage( "Image", img );
+   // cvWaitKey(0); 
+   // cvDestroyWindow("Image");
+   // cvSaveImage(".\\small.jpg",img,0);
+
+   // apReleaseMatrix1Duc(data1);
+   // apReleaseMatrix1Dd(data2);
+   // apReleaseMatrix2Dd(data3,img->height);
+   // apReleaseMatrix2Dd(largescale,img->height);
+   // apReleaseMatrix2Dd(smallscale,img->height);
+   // apReleaseMatrix1Dd(data4);
+   // apReleaseMatrix1Dd(data5);
+   // apReleaseMatrix1Dc(data6);
+
+   // cvReleaseImage( &img);
 
 /******************************************************************
 test: adjust small-scale images
@@ -201,75 +297,76 @@ test: image fuse of the adjusted small-scale image and the normalized large-scal
 /******************************************************************************************************************
 test: whole system (image decomposation + adjust small-scale image + normalize large-scale image + image fusing)
 *******************************************************************************************************************/
-	unsigned char* data1;
-	double* data2;
-	double **data3;
-	double *data4;
-	double *data5;
-	char *data6;
-	double **largescale;
-	double **smallscale;
-	int i;
-	CvMat * smallAdjust, *img_re;
-    cv::Mat largedct;
-	IplImage* img = cvLoadImage("./test_image.bmp", 0);
-	if (!img)
-	{
-		printf("can't open the image...\n");
+	// unsigned char* data1;
+	// double* data2;
+	// double **data3;
+	// double *data4;
+	// double *data5;
+	// char *data6;
+	// double **largescale;
+	// double **smallscale;
+	// int i;
+	// CvMat * smallAdjust, *img_re;
+ //    cv::Mat largedct;
+	// IplImage* img = cvLoadImage("/home/hooman/Illumination-Normalization-For-Face-Images/boy.bmp", 0);
+	// if (!img)
+	// {
+	// 	printf("can't open the image...\n");
 
-	}
-	/*****image decomposition************/
-	data1 = apCtoUC(img->imageData, img->imageSize);
+	// }
+	// /*****image decomposition************/
+	// data1 = apCtoUC(img->imageData, img->imageSize);
 
-	data2 = apLogUC2(data1, img->imageSize);
-	data3 = ap1DTo2Dd(data2, img->height, img->width);
+	// data2 = apLogUC2(data1, img->imageSize);
+	// data3 = ap1DTo2Dd(data2, img->height, img->width);
 
-	printf("conduct LTV.....\n");//decompose source image to a small-scale image and a large-scale image
+	// printf("conduct LTV.....\n");//decompose source image to a small-scale image and a large-scale image
 
-	largescale = apLTV(data3, img->height, img->width, 0.4, 0.1, 100);
+	// largescale = apLTV(data3, img->height, img->width, 0.4, 0.1, 100);
 
-	smallscale = apGetSmallScale(data3, largescale, img->height, img->width);
-	//  apDataPrint2Dd(smallscale,img->height, img->width,".\\1.txt");
+	// smallscale = apGetSmallScale(data3, largescale, img->height, img->width);
+	// //  apDataPrint2Dd(smallscale,img->height, img->width,".\\1.txt");
 
-	/*************image process******************/
-	largedct = apLargeScale_LogDCT(img->height, img->width, largescale); // normalize large-scale image
+	// /*************image process******************/
+	// largedct = apLargeScale_LogDCT(img->height, img->width, largescale); // normalize large-scale image
 
 
-	/************image reconstruction*************/
-	data2 = apExp1D((double*)largedct.data, img->imageSize);//large
+	// /************image reconstruction*************/
+	// data2 = apExp1D((double*)largedct.data, img->imageSize);//large
 
-	data3 = apExp2D(smallscale, img->height, img->width);//small
-	data4 = ap2DTo1Dd(data3, img->height, img->width);
-	//apDataPrint2Dd(data3,img->height, img->width,".\\1.txt");
+	// data3 = apExp2D(smallscale, img->height, img->width);//small
+	// data4 = ap2DTo1Dd(data3, img->height, img->width);
+	// //apDataPrint2Dd(data3,img->height, img->width,".\\1.txt");
 
-	for (i = 0; i < img->imageSize; i++)
-	{
-		data4[i] = data2[i] * data4[i];
-	}
-	data6 = apDtoC_strengthened(data4, img->imageSize);
+	// for (i = 0; i < img->imageSize; i++)
+	// {
+	// 	data4[i] = data2[i] * data4[i];
+	// }
+	// data6 = apDtoC_strengthened(data4, img->imageSize);
 
-	/****************image display and save************/
-	apCopyMatrix1Dc(data6, img->imageData, img->imageSize);
-    printf("conduct display img.....\n");
-	cvNamedWindow("Image", 1);
-	cvShowImage("Image", img);
-    cvWaitKey(0);
-    //cv::destroyWindow("Image");
-	cvDestroyAllWindows();
-    //cvSaveImage("small.jpg", img, 0);
+	// /****************image display and save************/
+	// apCopyMatrix1Dc(data6, img->imageData, img->imageSize);
+ //    printf("conduct display img.....\n");
+	// cvNamedWindow("Image", 1);
+	// cvShowImage("Image", img);
+ //    cvWaitKey(0);
+ //    //cv::destroyWindow("Image");
+	// cvDestroyAllWindows();
+	// auto hsIm = cvCreateMat(img,CV_32SC1);
+	// imwrite("/home/hooman/Illumination-Normalization-For-Face-Images/boyRes.jpg", img);
 
-	apReleaseMatrix1Duc(data1);
-	apReleaseMatrix1Dd(data2);
-	apReleaseMatrix2Dd(data3, img->height);
-	apReleaseMatrix2Dd(largescale, img->height);
-	apReleaseMatrix2Dd(smallscale, img->height);
-	apReleaseMatrix1Dd(data4);
-	//apReleaseMatrix1Dd(data5);
-	apReleaseMatrix1Dc(data6);
+	// apReleaseMatrix1Duc(data1);
+	// apReleaseMatrix1Dd(data2);
+	// apReleaseMatrix2Dd(data3, img->height);
+	// apReleaseMatrix2Dd(largescale, img->height);
+	// apReleaseMatrix2Dd(smallscale, img->height);
+	// apReleaseMatrix1Dd(data4);
+	// //apReleaseMatrix1Dd(data5);
+	// apReleaseMatrix1Dc(data6);
 
-	//cv::cvReleaseMat(&largedct);
-    largedct.release();
-	cvReleaseImage(&img);
+	// //cv::cvReleaseMat(&largedct);
+ //    largedct.release();
+	// cvReleaseImage(&img);
 
-    return 0;
+    // return 0;
 }
