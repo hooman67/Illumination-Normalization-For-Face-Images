@@ -38,7 +38,7 @@ int main()
     cv::Mat largedct_cvmat;
     cv::Mat img_in;
     // cv::Mat img_out;
-    size_t img_c_size_bytes;
+    size_t img_in_size_bytes;
 
 
 
@@ -47,9 +47,14 @@ int main()
         std::cout << "\nprocessing Image: " << img_in_path_str << std::endl;
 
 		img_in = cv::imread(img_in_path_str, cv::IMREAD_GRAYSCALE);
+		std::cout << "\n\nimg_in width: " << img_in.cols << "\n" <<
+		"img_out height: " << img_in.rows << "\n" <<
+		"img_out depth: " << img_in.depth() << "\n" <<
+		"img_out channels " << img_in.channels() << "\n" <<
+		"img_out type: " << img_in.type() << "\n";
 		// cv::Mat img_out = img_in.clone();
 
-		img_c_size_bytes = img_in.total() * img_in.elemSize();
+		img_in_size_bytes = img_in.total() * img_in.elemSize();
 
 		if (img_in.empty()){
 			std::cout << "can't open the image skipping it.\n";
@@ -64,7 +69,7 @@ int main()
 		
 		/*****image decomposition************/
 		//log transform, also transforms the data to double
-		img_d = apLogUC2(img_in.data, img_c_size_bytes);
+		img_d = apLogUC2(img_in.data, img_in_size_bytes);
 
 		//matrix transform to 2d
 		img_2d = ap1DTo2Dd(img_d, img_in.rows, img_in.cols);
@@ -81,30 +86,33 @@ int main()
 
 		/************image reconstruction*************/
 		//conduct exponential transform
-		largeScale_exp_d = apExp1D((double*)largedct_cvmat.data, img_c_size_bytes);//large
+		largeScale_exp_d = apExp1D((double*)largedct_cvmat.data, img_in_size_bytes);//large
 		
 		//conduct exponential transform
 		smallScale_exp_2d = apExp2D(smallscale_2d, img_in.rows, img_in.cols);//small
 		smallScale_exp_d = ap2DTo1Dd(smallScale_exp_2d, img_in.rows, img_in.cols);
 
 
-		for (int i = 0; i < img_c_size_bytes; i++){
+		for (int i = 0; i < img_in_size_bytes; i++){
 			img_d[i] = largeScale_exp_d[i] * smallScale_exp_d[i];
 		}
 
 		//transform double data to char data with 100 times strengthened
-		img_recon_c = apDtoC_strengthened(img_d, img_c_size_bytes, 100);
+		img_recon_c = apDtoC_strengthened(img_d, img_in_size_bytes, 100);
 
 
 		/****************image display and save************/
-		// apCopyMatrix1Dc(img_recon_c, img_out.data, img_c_size_bytes);
-		apCopyMatrix1Duc(img_recon_c, img_in.data, img_c_size_bytes);
+		apCopyMatrix1Duc(img_recon_c, img_in.data, img_in_size_bytes);
+
+		//convert from unsigned to signed
+		// img_in.convertTo(img_in, 1);
+		cv::cvtColor(img_in, img_in, cv::COLOR_GRAY2RGB);
 	    
-		// std::cout << "\n\nimg_c width: " << img_in.cols << "\n" <<
-		// "img_in height: " << img_in.rows << "\n" << "img_in size: " <<
-		// img_in.size().width << "*" << img_in.size().height << "\n" <<
-		// "img_in depth: " << img_in.depth() << "\n" << "img_in channels " <<
-		// img_in.channels() << "\n" << "img_in type: " << img_in.type() << "\n";
+		std::cout << "\n\nimg_out width: " << img_in.cols << "\n" <<
+		"img_out height: " << img_in.rows << "\n" <<
+		"img_out depth: " << img_in.depth() << "\n" <<
+		"img_out channels " << img_in.channels() << "\n" <<
+		"img_out type: " << img_in.type() << "\n";
 
 		// std::cout << "\n\nimg_out width: " << img_out.cols << "\n" <<
 		// "img_out height: " << img_out.rows << "\n" <<
