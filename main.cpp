@@ -216,7 +216,7 @@ int main()
 // 		img_2d = ap1DTo2Dd(img_d, img_in.rows, img_in.cols);
 
 // 		//apply LTV
-// 		largescale_2d = apLTV(img_2d, img_in.rows, img_in.cols, 0.4, 0.1, 100);
+// 		largescale_2d = apLTV(img_2d, img_in.rows, img_in.cols, 0.01, 0.1, 1000);
 // 		smallscale_2d = apGetSmallScale(img_2d, largescale_2d, img_in.rows, img_in.cols);
 
 
@@ -241,13 +241,24 @@ int main()
 // 		//transform double data to char data with 100 times strengthened
 // 		img_recon_c = apDtoC_strengthened(img_d, img_in_size_bytes, 1);
 
+// 		auto recSmall = apDtoC_strengthened(smallScale_exp_d, img_in_size_bytes, 100);
+// 		auto recLarge = apDtoC_strengthened(largeScale_exp_d, img_in_size_bytes, 1);
+
 
 // 		/****************image display and save************/
 // 		apCopyMatrix1Duc(img_recon_c, img_in.data, img_in_size_bytes);
 
+// 		cv::Mat img_small = img_in.clone();
+// 		apCopyMatrix1Duc(recSmall, img_small.data, img_in_size_bytes);
+// 		cv::Mat img_large = img_in.clone();
+// 		apCopyMatrix1Duc(recLarge, img_large.data, img_in_size_bytes);
+
 // 		//convert from unsigned to signed
 // 		// img_in.convertTo(img_in, 1);
 // 		cv::cvtColor(img_in, img_in, cv::COLOR_GRAY2RGB);
+// 		cv::cvtColor(img_large, img_large, cv::COLOR_GRAY2RGB);
+// 		cv::cvtColor(img_small, img_small, cv::COLOR_GRAY2RGB);
+
 	    
 // 		std::cout << "\n\nimg_out width: " << img_in.cols << "\n" <<
 // 		"img_out height: " << img_in.rows << "\n" <<
@@ -269,6 +280,12 @@ int main()
 //         std::string fileName = img_in_path_str.substr(lastDirPos+1, img_in_path_str.length());
 //         std::string img_out_path = path_out + "/" + fileName;
 // 		cv::imwrite(img_out_path, img_in);
+
+// 		std::string img_out_path_small = path_out + "/small_" + fileName;
+// 		cv::imwrite(img_out_path_small, img_small);
+
+// 		std::string img_out_path_large = path_out + "/large_" + fileName;
+// 		cv::imwrite(img_out_path_large, img_large);
 
 // 		// cv::imshow("img_in", img_in);
 // 		// // cv::imshow("img_out", img_out);
