@@ -252,7 +252,7 @@ function:run for test
 // 	int i, j;
 // 	FILE *fp;
 
-// 	IplImage* img = cvLoadImage(".\\1.bmp", 0);
+// 	IplImage* img = cvLoadImage("/home/hooman/Illumination-Normalization-For-Face-Images/boy.bmp", 0);
 // 	if (!img)
 // 	{
 // 		printf("can't open the image...\n");
@@ -276,14 +276,16 @@ function:run for test
 // 	data3 = ap1DTo2Dd(data2, img->height, img->width);
 // 	//largescale=apLTV(data3,img->height, img->width, 0.4, 0.2,100);
 // 	largescale = apLTV_new(data3, img->height, img->width, 0.4, 0.1, 0.01, 100);
-// 	apDataPrint2Dd(largescale, img->height, img->width, ".\\largescale.txt");
+// 	// apDataPrint2Dd(largescale, img->height, img->width, ".\\largescale.txt");
 // 	//smallscale=apGetSmallScale(data3, largescale, img->height, img->width);
 // 	//LQI
 // 	for (i = 0; i < img->height; i++)
+// 	{
 // 		for (j = 0; j < img->height; j++)
 // 		{
 // 			largescale[i][j] = data3[i][j] / largescale[i][j];
 // 		}
+// 	}
 // 	//apDataPrint2Dd(smallscale,img->height, img->width,".\\smallscale.txt");
 // 	data4 = ap2DTo1Dd(largescale, img->height, img->width);
 // 	data5 = apExp1D_strengthened(data4, img->imageSize);
@@ -298,20 +300,20 @@ function:run for test
 // 	cvShowImage("Image", img);
 // 	cvWaitKey(0);
 // 	cvDestroyWindow("Image");
-// 	cvSaveImage(".\\Snorm.jpg", img, 0);
+// 	// cvSaveImage(".\\Snorm.jpg", img, 0);
 
-// 	apReleaseMatrix1Duc(data1);
-// 	apReleaseMatrix1Dd(data2);
-// 	apReleaseMatrix2Dd(data3, img->height);
-// 	apReleaseMatrix2Dd(largescale, img->height);
-// 	apReleaseMatrix2Dd(smallscale, img->height);
-// 	apReleaseMatrix1Dd(data4);
-// 	apReleaseMatrix1Dd(data5);
-// 	apReleaseMatrix1Dc(data6);
+// 	// apReleaseMatrix1Duc(data1);
+// 	// apReleaseMatrix1Dd(data2);
+// 	// apReleaseMatrix2Dd(data3, img->height);
+// 	// apReleaseMatrix2Dd(largescale, img->height);
+// 	// apReleaseMatrix2Dd(smallscale, img->height);
+// 	// apReleaseMatrix1Dd(data4);
+// 	// apReleaseMatrix1Dd(data5);
+// 	// apReleaseMatrix1Dc(data6);
 
-// 	cvReleaseMat(&largedct);
-// 	cvReleaseMat(&data1);
-// 	cvReleaseImage(&img);
+// 	// cvReleaseMat(&largedct);
+// 	// cvReleaseMat(&data1);
+// 	// cvReleaseImage(&img);
 
 // 	return 0;
 // }
